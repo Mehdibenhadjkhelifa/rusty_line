@@ -21,12 +21,15 @@ fn main() {
                     eprintln!("{}",e);
                 }
             },
+            "exit" => return,
             command =>{
-                let mut child = Command::new(command)
+                let child = Command::new(command)
                     .args(args)
-                    .spawn()
-                    .expect("Error Executing command ");
-                child.wait().unwrap();
+                    .spawn();
+                match child{
+                    Ok(mut child) => {let _ = child.wait();},
+                    Err(e) => eprintln!("{}",e),
+                };
             }
         }
     }
