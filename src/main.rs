@@ -1,23 +1,22 @@
-use std::{io::{stdin, stdout, Write}, process::Command};
+use std::{
+    io::{stdin, stdout, Write},
+    process::Command,
+};
 
 fn main() {
-    loop{
+    loop {
         print!("> ");
         stdout().flush().expect("Error flushing stdout");
         let mut input: String = String::new();
-        let mut command: &str = "None";
-        match stdin().read_line(&mut input) {
-            Ok(_) => {
-                command = input.trim();
-                println!("Successfully read {}", command);
-            }
-            Err(error) => println!("Error reading input : {}", error),
-        }
-        match Command::new(command).spawn() {
-            Ok(mut ch) => {println!("Got the child : {:?}", ch);
-                let _ = ch.wait();
-            }
-            Err(err) => println!("Error executing command : {},\nError is : {}", command, err),
-        }
+        let command: &str;
+        stdin().read_line(&mut input).expect("Error reading input");
+        let mut parts = input.trim().split_whitespace();
+        command = parts.next().expect("Invalid Command");
+        let args = parts;
+        let mut child = Command::new(command)
+            .args(args)
+            .spawn()
+            .expect("Error Executing command ");
+        child.wait().unwrap();
     }
 }
